@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Transformers\UserTransformer;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreUserRequest;
@@ -17,6 +18,9 @@ class RegisterController extends Controller
 
         $user->save();
 
-
+        return fractal()
+            ->item($user)
+            ->transformWith(new UserTransformer)
+            ->toArray();
     }
 }
