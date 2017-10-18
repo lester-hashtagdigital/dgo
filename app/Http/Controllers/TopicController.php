@@ -66,4 +66,13 @@ class TopicController extends Controller
             ->transformWith(new TopicTransformer)
             ->toArray();
     }
+
+    public function destroy(Topic $topic)
+    {
+        $this->authorize('destroy', $topic);
+
+        $topic->delete();
+
+        return response(null, 204);
+    }
 }
