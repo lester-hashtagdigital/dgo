@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Post;
 use App\Topic;
-use App\Transformers\TopicTransformer;
 use Illuminate\Http\Request;
+use App\Transformers\TopicTransformer;
 use App\Http\Requests\StoreTopicRequest;
+use App\Http\Requests\UpdateTopicRequest;
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 class TopicController extends Controller
 {
@@ -20,6 +21,15 @@ class TopicController extends Controller
             ->parseIncludes(['user'])
             ->transformWith(new TopicTransformer)
             ->paginateWith(new IlluminatePaginatorAdapter($topics))
+            ->toArray();
+    }
+
+    public function show(Topic $topic)
+    {
+        return fractal()
+            ->item($topic)
+            ->parseIncludes(['user', 'posts', 'posts.user'])
+            ->transformWith(new TopicTransformer)
             ->toArray();
     }
 
@@ -39,7 +49,20 @@ class TopicController extends Controller
         return fractal()
             ->item($topic)
             ->parseIncludes(['user'])
-//            ->parseIncludes(['user', 'posts', 'posts.user'])
+            ->transformWith(new TopicTransformer)
+            ->toArray();
+    }
+
+    public function update(UpdateTopicRequest $request, Topic $topic)
+    {
+        $this->authorize('update', $topic);
+
+        $topic->title = $request->get('title', $topic->title);
+        $topic->save();
+
+        return fractal()
+            ->item($topic)
+            ->parseIncludes(['user'])
             ->transformWith(new TopicTransformer)
             ->toArray();
     }
