@@ -33,6 +33,11 @@ class User extends Authenticatable
         return 'https://www.gravatar.com/avatar/' . md5($this->email) . '?s=45&d=mm';
     }
 
+    public function hasLikedPost(Post $post)
+    {
+        return $post->likes->where('user_id', $this->id)->count() === 1;
+    }
+
     public function ownsTopic(Topic $topic)
     {
         return $this->id === $topic->user->id;
