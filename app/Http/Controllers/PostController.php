@@ -15,6 +15,7 @@ class PostController extends Controller
     {
         $post = new Post;
         $post->body = $request->body;
+        $this->updateThumbnail($request, $post);
         $post->user()->associate($request->user());
 
         $topic->posts()->save($post);
@@ -31,6 +32,7 @@ class PostController extends Controller
         $this->authorize('update', $post);
 
         $post->body = $request->get('body', $post->body);
+        $this->updateThumbnail($request, $post);
         $post->save();
 
         return fractal()
@@ -47,5 +49,19 @@ class PostController extends Controller
         $post->delete();
 
         return response(null, 204);
+    }
+
+    /**
+     * @param StorePostRequest $request
+     * @param $post
+     */
+    protected function updateThumbnail(StorePostRequest $request, $post)
+    {
+        if ($request->hasFile('thumbnail')) {
+            $file = $request->file('thumbnail');
+            $name = $file->getClientOriginalName();
+            $file->move(public_path() . '/images/', $name);
+            $post->thumbnail = $name;
+        }
     }
 }

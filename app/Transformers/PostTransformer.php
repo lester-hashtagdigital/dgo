@@ -19,6 +19,7 @@ class PostTransformer extends \League\Fractal\TransformerAbstract
         return [
             'id' => $post->id,
             'body' => $post->body,
+            'thumbnail' => $post->thumbnail ? url('/images/' . $post->thumbnail) : '',
             'like_count' => $post->likes->count(),
             'created_at' => $post->created_at->toDateTimeString(),
             'created_at_human' => $post->created_at->diffForHumans(),

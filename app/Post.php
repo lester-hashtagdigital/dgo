@@ -9,7 +9,7 @@ class Post extends Model
 {
     use Orderable;
 
-    protected $fillable = ['body'];
+    protected $fillable = ['body', 'thumbnail'];
 
     public function topic()
     {
